@@ -9,9 +9,11 @@
         color: white;
       }
       #chart {
-        width: 800px;
+        width: 80%;
         height: 400px;
         margin: 50px auto;
+        overflow: hidden;
+        position: relative;
       }
     </style>
   </head>
@@ -145,23 +147,25 @@
         marginRight: 40,
         maxHeight: 1000,
         minHeight: 0,
-        interval: 10,
+        yTicks: 10,
         values: [0, 10, 20],
         colors: ["#0f0", "#0ff", "#00f"],
-        // renderType: "arrow",
         renderType: "barb",
-
+        // renderType: "arrow",
+        barbWidth: 2,
+        // arrowWidth: 2,
         titleSize: "",
         titleColor: "",
         unitSize: "",
         unitColor: "",
         gridColor: "",
         gridOpacity: 0.4,
-        axisLineColor: "green",
-        tickLineColor: "yellow",
-        tickLineWidth: 2,
-        axisTextColor: "red",
+        axisLineColor: "",
+        axisLineWidth: 1,
+        axisTextColor: "",
         axisFontSize: "12px",
+        colorGradient: true,
+        direction: "left",
       };
       const raChart = window.raliz.raChart;
       // 绘图初始化
@@ -173,9 +177,6 @@
       });
       chart.renderData(config.minHeight, config.maxHeight);
       // 更新绘图
-      // setTimeout(() => {
-      //   chart.renderData(0, 400);
-      // }, 10 * 1000);
       // 重置绘图
       // 绘图下载
       // 更新绘图配置项

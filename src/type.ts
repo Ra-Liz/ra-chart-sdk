@@ -1,47 +1,45 @@
 // 参数类型
 export type ChartConfig = {
-  /** 图表类型 */
-  type: ChartType;
-  /** 图表数据 */
-  data: BarType | ThiType | LineType;
-  /** 数据-时间戳 */
-  timelen: TimestampCount;
-  /** 图表配置 */
-  config: ChartConfigType;
+  type: ChartType; // 图表类型
+  data: BarType | ThiType | LineType; // 图表数据
+  timelen: TimestampCount; // 时间戳数量
+  config: ChartConfigTypeBar | ChartConfigTypeThi; // 图表配置
 };
-/** 时间戳数量 */
-export type TimestampCount = number;
 /** 类型 */
 export type ChartType = "bar" | "thi" | "line";
+/** 时间戳数量 */
+export type TimestampCount = number;
 /** config数据 */
-export type ChartConfigType = {
-  /** 标识和文本 */
-  className: string;
-  title: string;
-  unit: string;
-  /** 布局和刻度 */
+type ChartConfigType = {
+  className: string; // class标识
+  title: string; // 标题
+  unit: string; // 单位
   marginBottom: number;
   marginTop: number;
   marginLeft: number;
   marginRight: number;
-  interval: number;
-  /** 图表颜色和形式 */
-  values: number[];
-  colors: string[];
-  renderType?: "barb" | "arrow";
-  /** 样式 */
-  titleSize?: string;
-  titleColor?: string;
-  unitSize?: string;
-  unitColor?: string;
-  gridColor?: string;
-  gridOpacity?: number;
-  axisLineColor?: string;
-  tickLineColor?: string;
-  tickLineWidth?: number;
-  axisTextColor?: string;
-  axisFontSize?: string;
+  yTicks: number; // Y轴刻度数量
+  values: number[]; // colorscale
+  colors: string[]; // colorscale
+  titleSize?: string; // 标题字体大小
+  titleColor?: string; // 标题字体颜色
+  unitSize?: string; // Y轴单位字体大小
+  unitColor?: string; // Y轴单位字体颜色
+  gridColor?: string; // 网格线颜色
+  gridOpacity?: number; // 网格线透明度
+  axisLineColor?: string; // 坐标轴线颜色
+  axisLineWidth?: number; // 坐标轴线宽度
+  axisTextColor?: string; // 坐标轴字体颜色
+  axisFontSize?: string; // 坐标轴字体大小
+  colorGradient?: boolean; // 是否渐变
+  direction?: "right" | "left"; // 时间轴更新方向
 };
+export type ChartConfigTypeBar = ChartConfigType & {
+  renderType?: "barb" | "arrow"; // 风羽图两种绘图方式
+  barbWidth?: number; // 风羽图标宽度
+  arrowWidth?: number; // 风箭图标宽度
+};
+export type ChartConfigTypeThi = ChartConfigType & {};
 
 // 不同类型的绘图 数据参数
 /** Bar  */
@@ -66,7 +64,7 @@ export type ThiType = ThiDatum[];
 export type LineDatum = [height: number, windSpeed: number, extra?: number];
 export type LineType = LineDatum[];
 
-// mian.ts 图标实例
+// mian.ts 图表实例
 export interface ChartInstance {
   renderData: (y1: number, y2: number) => void;
   destroy?(): void;
