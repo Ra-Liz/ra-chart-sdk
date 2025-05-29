@@ -67,5 +67,11 @@ export type LineType = LineDatum[];
 // mian.ts 图表实例
 export interface ChartInstance {
   renderData: (y1: number, y2: number) => void;
-  destroy?(): void;
+  updateColor: (
+    colorGradient: boolean,
+    colors: string[],
+    values: number[]
+  ) => void;
+  resize: () => void;
+  destroy: () => void;
 }

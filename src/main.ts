@@ -38,9 +38,15 @@ export class raChart implements ChartInstance {
     this.chart.renderData(y1, y2);
   }
 
+  updateColor(colorGradient: boolean, colors: string[], values: number[]) {
+    this.chart.updateColor(colorGradient, colors, values);
+  }
+
+  resize() {
+    this.chart.resize();
+  }
+
   destroy() {
-    if (typeof this.chart.destroy === "function") {
-      this.chart.destroy();
-    }
+    this.chart.destroy();
   }
 }

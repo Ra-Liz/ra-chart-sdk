@@ -3,7 +3,8 @@ import type { BarDatum, BarType, ChartConfigTypeBar } from "../type";
 
 export class WindBar {
   // 定义svg变量
-  private svg!: d3.Selection<SVGSVGElement, unknown, null, undefined>;
+  private svg: d3.Selection<SVGSVGElement, unknown, null, undefined> | null =
+    null;
   // 定义颜色比例尺变量
   private colorScale!:
     | d3.ScaleLinear<string, number, never>
@@ -22,6 +23,16 @@ export class WindBar {
   private gridX!: any;
   // 定义y轴网格线变量
   private gridY!: any;
+  // tooltip
+  private tooltip: d3.Selection<
+    HTMLDivElement,
+    unknown,
+    null,
+    undefined
+  > | null = null;
+  // y1 y2
+  private y1: number = 0;
+  private y2: number = 0;
 
   // 定义容器变量
   private container: HTMLElement;
@@ -55,8 +66,11 @@ export class WindBar {
 
   // 渲染数据
   renderData(y1: number, y2: number) {
+    this.y1 = y1;
+    this.y2 = y2;
     if (this.svg) {
       this.svg.remove();
+      this.svg = null;
     }
     const {
       className,
@@ -93,7 +107,7 @@ export class WindBar {
       .attr("width", width)
       .attr("height", height)
       .style("max-width", "100%")
-      .style("height", "auto");
+      .style("max-height", "100%");
 
     // 创建y轴比例尺
     this.yScale = d3
@@ -248,19 +262,21 @@ export class WindBar {
       .attr("height", height - marginTop - marginBottom);
 
     // 绘制tooltip
-    const tooltip = d3
-      .select(this.container)
-      .append("div")
-      .attr("class", `tooltip-${this.className}`)
-      .style("position", "absolute")
-      .style("pointer-events", "none")
-      .style("padding", "6px 8px")
-      .style("background", "rgba(0, 0, 0, 0.7)")
-      .style("color", "#fff")
-      .style("font-size", "12px")
-      .style("border-radius", "4px")
-      .style("visibility", "hidden")
-      .style("z-index", "10");
+    this.tooltip =
+      this.tooltip ||
+      d3
+        .select(this.container)
+        .append("div")
+        .attr("class", `tooltip-${this.className}`)
+        .style("position", "absolute")
+        .style("pointer-events", "none")
+        .style("padding", "6px 8px")
+        .style("background", "rgba(0, 0, 0, 0.7)")
+        .style("color", "#fff")
+        .style("font-size", "12px")
+        .style("border-radius", "4px")
+        .style("visibility", "hidden")
+        .style("z-index", "10");
     let tooltipWidth = 0;
     let tooltipHeight = 0;
     // tooltip定位
@@ -273,7 +289,7 @@ export class WindBar {
       if (y + tooltipHeight + 18 > height) {
         y = y - tooltipHeight - 20;
       }
-      tooltip.style("top", `${y + 10}px`).style("left", `${x + 10}px`);
+      this.tooltip?.style("top", `${y + 10}px`).style("left", `${x + 10}px`);
     }, 100);
     // 绘制元素
     const clipGroup = this.svg
@@ -292,7 +308,7 @@ export class WindBar {
           : this.drawWindArrow(el, d);
         el.on("mouseover", (event) => {
           el.style("filter", "brightness(150%)");
-          tooltip.style("visibility", "visible").html(
+          this.tooltip?.style("visibility", "visible").html(
             `
               <div><strong>时间：</strong>${formatTime(
                 new Date(d[0] * 1000)
@@ -303,15 +319,16 @@ export class WindBar {
             `
           );
           if (tooltipWidth === 0 || tooltipHeight === 0) {
-            tooltipWidth = tooltip!.node()?.getBoundingClientRect().width || 0;
+            tooltipWidth =
+              this.tooltip!.node()?.getBoundingClientRect().width || 0;
             tooltipHeight =
-              tooltip!.node()?.getBoundingClientRect().height || 0;
+              this.tooltip!.node()?.getBoundingClientRect().height || 0;
           }
         })
           .on("mousemove", throttledMoveHandler)
           .on("mouseout", () => {
             el.style("filter", null);
-            tooltip.style("visibility", "hidden");
+            this.tooltip?.style("visibility", "hidden");
           });
       });
 
@@ -332,6 +349,39 @@ export class WindBar {
       .call(this.throttle(this.zoom, 60))
       .on("wheel", (event) => event.preventDefault())
       .on("dblclick.zoom", null);
+  }
+  // 更新颜色
+  updateColor(colorGradient: boolean, colors: string[], values: number[]) {
+    // 创建颜色比例尺
+    if (colorGradient) {
+      this.colorScale = d3
+        .scaleLinear<string, number>()
+        .range(colors)
+        .domain(values)
+        .clamp(true);
+    } else {
+      this.colorScale = d3
+        .scaleThreshold<number, string>()
+        .range(colors)
+        .domain(values);
+    }
+    d3.selectAll(`.my-${this.renderType}-${this.className}`).each(
+      (d, i, nodes) => {
+        const d3Node = d3.select(nodes[i]);
+        let value = d3Node.attr("wind-value");
+        let color = this.colorScale(+value);
+        d3Node.style("stroke", color);
+      }
+    );
+  }
+  // resize
+  resize() {
+    this.renderData(this.y1, this.y2);
+  }
+  // 销毁函数
+  destroy() {
+    this.svg?.remove();
+    this.svg = null;
   }
 
   // 节流
@@ -479,10 +529,5 @@ export class WindBar {
       .attr("translate-x", x)
       .attr("translate-y", y)
       .attr("translate-rotate", data[3]);
-  }
-
-  // 销毁函数
-  destroy() {
-    this.svg?.remove();
   }
 }
