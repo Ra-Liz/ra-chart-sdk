@@ -254,7 +254,7 @@ export class WindThi {
     // clipPath
     this.svg
       .append("clipPath")
-      .attr("id", `clip-area-windbar-${className}`)
+      .attr("id", `clip-area-windthi-${className}`)
       .append("rect")
       .attr("x", marginLeft)
       .attr("y", marginTop)
@@ -294,8 +294,8 @@ export class WindThi {
     // 绘制元素
     const clipGroup = this.svg
       .append("g")
-      .attr("clip-path", `url(#clip-area-windbar-${className})`)
-      .attr("class", `clip-windbar-${className}`);
+      .attr("clip-path", `url(#clip-area-windthi-${className})`)
+      .attr("class", `clip-windthi-${className}`);
 
     const timelen = new Set(this.data.map((item) => item[0])).size;
     const rectWidth = (width - marginLeft - marginRight) / timelen;

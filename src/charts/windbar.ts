@@ -341,10 +341,6 @@ export class WindBar {
           el.on("dblclick", (event) => {
             const d3Node = d3.select(event.target);
             const value = d3Node.attr("wind-time");
-            let lineData = this.data.filter((d) => {
-              return d[0] === +value;
-            });
-            dblClick(lineData);
             this.selectedTime = +value;
             this.renderSelectLine(+value);
           });
@@ -592,6 +588,13 @@ export class WindBar {
 
   // 绘制dbl line
   private renderSelectLine(time: number) {
+    const { dblClick } = this.config;
+    let lineData = this.data.filter((d) => {
+      return d[0] === time;
+    });
+    if (dblClick) {
+      dblClick(lineData);
+    }
     const x = this.xScale(time * 1000);
     const y = this.container.clientHeight - (this.config.marginBottom ?? 20);
     const topTriangleData = "M0,0 L10,0 L5,-10 Z";

@@ -1,8 +1,14 @@
 import { WindBar } from "./charts/windbar";
 import { WindThi } from "./charts/windthi";
-// import { WindLine } from "./charts/windline";
+import { Profile } from "./charts/peofile";
 
-import type { ChartInstance, ChartConfig } from "./type";
+import type {
+  ChartInstance,
+  ChartConfig,
+  BarType,
+  ThiType,
+  ProfileType,
+} from "./type";
 
 export class raChart implements ChartInstance {
   private chart: ChartInstance;
@@ -12,20 +18,24 @@ export class raChart implements ChartInstance {
       case "bar":
         this.chart = new WindBar(
           container,
-          options.data as any,
-          options.config
+          options.data as BarType,
+          options.config as any
         );
         break;
       case "thi":
         this.chart = new WindThi(
           container,
-          options.data as any,
+          options.data as ThiType,
+          options.config as any
+        );
+        break;
+      case "line":
+        this.chart = new Profile(
+          container,
+          options.data as ProfileType,
           options.config
         );
         break;
-      // case "line":
-      //   this.chart = new WindLine(container, options.data as any, options.config, options.timelen);
-      //   break;
       default:
         throw new Error(`Unsupported chart type: ${options.type}`);
     }
@@ -36,7 +46,9 @@ export class raChart implements ChartInstance {
   }
 
   updateColor(colorGradient: boolean, colors: string[], values: number[]) {
-    this.chart.updateColor(colorGradient, colors, values);
+    if (this.chart.updateColor) {
+      this.chart.updateColor(colorGradient, colors, values);
+    }
   }
 
   resize() {

@@ -1,8 +1,8 @@
 // 参数类型
 export type ChartConfig = {
   type: ChartType; // 图表类型
-  data: BarType | ThiType | LineType; // 图表数据
-  config: ChartConfigTypeBar | ChartConfigTypeThi; // 图表配置
+  data: BarType | ThiType | ProfileType; // 图表数据
+  config: ChartConfigTypeBar | ChartConfigTypeThi | ChartConfigProfile; // 图表配置
 };
 /** 类型 */
 export type ChartType = "bar" | "thi" | "line";
@@ -44,6 +44,31 @@ export type ChartConfigTypeThi = ChartConfigType & {
   valueLabel?: string; // tooltip值标签
   valueUnit?: string; // tooltip值单位
 };
+export type ChartConfigProfile = {
+  className: string; // class标识
+  title: string; // 标题
+  unit: string; // 单位
+  marginBottom?: number;
+  marginTop?: number;
+  marginLeft?: number;
+  marginRight?: number;
+  yTicks: number; // Y轴刻度数量
+  titleSize?: string; // 标题字体大小
+  titleColor?: string; // 标题字体颜色
+  unitSize?: string; // Y轴单位字体大小
+  unitColor?: string; // Y轴单位字体颜色
+  gridColor?: string; // 网格线颜色
+  gridOpacity?: number; // 网格线透明度
+  axisLineColor?: string; // 坐标轴线颜色
+  axisLineWidth?: number; // 坐标轴线宽度
+  axisTextColor?: string; // 坐标轴字体颜色
+  axisFontSize?: string; // 坐标轴字体大小
+  lineColor?: string; // 廓线的颜色
+  lineWidth?: number; // 廓线的宽度
+  circleRadius?: number; // 圆点的半径
+  valueLabel?: string; // tooltip值标签
+  valueUnit?: string; // tooltip值单位
+};
 
 // 不同类型的绘图 数据参数
 /** Bar  */
@@ -65,13 +90,13 @@ export type ThiDatum = [
 ];
 export type ThiType = ThiDatum[];
 /** Line  */
-export type LineDatum = [height: number, windSpeed: number, extra?: number];
-export type LineType = LineDatum[];
+export type ProfileDatum = [height: number, value: number];
+export type ProfileType = ProfileDatum[];
 
 // mian.ts 图表实例
 export interface ChartInstance {
   renderData: (y1: number, y2: number) => void;
-  updateColor: (
+  updateColor?: (
     colorGradient: boolean,
     colors: string[],
     values: number[]
