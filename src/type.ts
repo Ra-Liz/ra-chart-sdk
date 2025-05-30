@@ -2,13 +2,11 @@
 export type ChartConfig = {
   type: ChartType; // 图表类型
   data: BarType | ThiType | LineType; // 图表数据
-  timelen: TimestampCount; // 时间戳数量
   config: ChartConfigTypeBar | ChartConfigTypeThi; // 图表配置
 };
 /** 类型 */
 export type ChartType = "bar" | "thi" | "line";
 /** 时间戳数量 */
-export type TimestampCount = number;
 /** config数据 */
 type ChartConfigType = {
   className: string; // class标识
@@ -42,7 +40,10 @@ export type ChartConfigTypeBar = ChartConfigType & {
   barbWidth?: number; // 风羽图标宽度
   arrowWidth?: number; // 风箭图标宽度
 };
-export type ChartConfigTypeThi = ChartConfigType & {};
+export type ChartConfigTypeThi = ChartConfigType & {
+  valueLabel?: string; // tooltip值标签
+  valueUnit?: string; // tooltip值单位
+};
 
 // 不同类型的绘图 数据参数
 /** Bar  */
@@ -57,8 +58,8 @@ export type BarType = BarDatum[];
 export type ThiDatum = [
   timestamp: number,
   height: number,
-  windSpeed: number,
-  windDirection: number,
+  val: number, // snr|vertical|turbulence
+  extra: number,
   top: number,
   bottom: number
 ];

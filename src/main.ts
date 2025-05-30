@@ -1,5 +1,5 @@
 import { WindBar } from "./charts/windbar";
-// import { WindThi } from "./charts/windthi";
+import { WindThi } from "./charts/windthi";
 // import { WindLine } from "./charts/windline";
 
 import type { ChartInstance, ChartConfig } from "./type";
@@ -16,16 +16,13 @@ export class raChart implements ChartInstance {
           options.config
         );
         break;
-      // this.chart = new WindBar(
-      //   container,
-      //   options.data as any,
-      //   options.config,
-      //   options.timelen
-      // );
-      // break;
-      // case "thi":
-      //   this.chart = new WindThi(container, options.data as any, options.config, options.timelen);
-      //   break;
+      case "thi":
+        this.chart = new WindThi(
+          container,
+          options.data as any,
+          options.config
+        );
+        break;
       // case "line":
       //   this.chart = new WindLine(container, options.data as any, options.config, options.timelen);
       //   break;

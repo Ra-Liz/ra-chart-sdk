@@ -20,9 +20,9 @@ export class WindBar {
   // 定义y轴变量
   private yAxis!: d3.Axis<number>;
   // 定义x轴网格线变量
-  private gridX!: any;
+  private gridX!: d3.Selection<SVGGElement, unknown, null, undefined>;
   // 定义y轴网格线变量
-  private gridY!: any;
+  private gridY!: d3.Selection<SVGGElement, unknown, null, undefined>;
   // tooltip
   private tooltip: d3.Selection<
     HTMLDivElement,
@@ -103,8 +103,6 @@ export class WindBar {
       dblClick,
       dblInit,
     } = this.config;
-
-    // TODO: 添加双击廓线标识
 
     // 创建svg元素
     const width = this.container.clientWidth;
@@ -428,32 +426,36 @@ export class WindBar {
     const newYScale = transform.rescaleY(this.yScale);
     requestAnimationFrame(() => {
       // 更新坐标轴
-      this.gridX.call((g: any) => {
-        g.call(this.xAxis.scale(newXScale));
-        g.selectAll(".tick text")
-          .attr("fill", this.config.axisTextColor || "#fff")
-          .attr("font-size", this.config.axisFontSize || "12px");
-        g.selectAll("line")
-          .attr("stroke", this.config.gridColor || "#ccc")
-          .attr("stroke-opacity", this.config.gridOpacity ?? 0.4)
-          .attr("stroke-dasharray", "3,3");
-        g.select(".domain")
-          .attr("stroke", this.config.axisLineColor || "#fff")
-          .attr("stroke-width", this.config.axisLineWidth || 1);
-      });
-      this.gridY.call((g: any) => {
-        g.call(this.yAxis.scale(newYScale));
-        g.selectAll(".tick text")
-          .attr("fill", this.config.axisTextColor || "#fff")
-          .attr("font-size", this.config.axisFontSize || "12px");
-        g.selectAll("line")
-          .attr("stroke", this.config.gridColor || "#ccc")
-          .attr("stroke-opacity", this.config.gridOpacity ?? 0.4)
-          .attr("stroke-dasharray", "3,3");
-        g.select(".domain")
-          .attr("stroke", this.config.axisLineColor || "#fff")
-          .attr("stroke-width", this.config.axisLineWidth || 1);
-      });
+      this.gridX.call(
+        (g: d3.Selection<SVGGElement, unknown, null, undefined>) => {
+          g.call(this.xAxis.scale(newXScale));
+          g.selectAll(".tick text")
+            .attr("fill", this.config.axisTextColor || "#fff")
+            .attr("font-size", this.config.axisFontSize || "12px");
+          g.selectAll("line")
+            .attr("stroke", this.config.gridColor || "#ccc")
+            .attr("stroke-opacity", this.config.gridOpacity ?? 0.4)
+            .attr("stroke-dasharray", "3,3");
+          g.select(".domain")
+            .attr("stroke", this.config.axisLineColor || "#fff")
+            .attr("stroke-width", this.config.axisLineWidth || 1);
+        }
+      );
+      this.gridY.call(
+        (g: d3.Selection<SVGGElement, unknown, null, undefined>) => {
+          g.call(this.yAxis.scale(newYScale));
+          g.selectAll(".tick text")
+            .attr("fill", this.config.axisTextColor || "#fff")
+            .attr("font-size", this.config.axisFontSize || "12px");
+          g.selectAll("line")
+            .attr("stroke", this.config.gridColor || "#ccc")
+            .attr("stroke-opacity", this.config.gridOpacity ?? 0.4)
+            .attr("stroke-dasharray", "3,3");
+          g.select(".domain")
+            .attr("stroke", this.config.axisLineColor || "#fff")
+            .attr("stroke-width", this.config.axisLineWidth || 1);
+        }
+      );
 
       // 更新图形元素
       d3.selectAll(`.my-${this.renderType}-${this.className}`).each(
