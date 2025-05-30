@@ -340,11 +340,8 @@ export class WindThi {
           });
         if (dblClick) {
           el.on("dblclick", (event) => {
+            // TODO: test
             const value = event.target["__data__"][0];
-            let lineData = this.data.filter((d) => {
-              return d[0] === +value;
-            });
-            dblClick(lineData);
             this.selectedTime = +value;
             this.renderSelectLine(+value);
           });
@@ -494,6 +491,13 @@ export class WindThi {
 
   // 绘制dbl line
   private renderSelectLine(time: number) {
+    const { dblClick } = this.config;
+    let lineData = this.data.filter((d) => {
+      return d[0] === time;
+    });
+    if (dblClick) {
+      dblClick(lineData);
+    }
     const x = this.xScale(time * 1000);
     const y = this.container.clientHeight - (this.config.marginBottom ?? 20);
     const topTriangleData = "M0,0 L10,0 L5,-10 Z";
