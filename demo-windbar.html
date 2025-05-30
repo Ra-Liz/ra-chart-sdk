@@ -166,7 +166,13 @@
         axisFontSize: "12px",
         colorGradient: true,
         direction: "left",
+        dblClick: handleSelect,
+        dblInit: true,
+        dblColor: "skyblue",
       };
+      function handleSelect(data) {
+        console.log("test handleSelect result: ", data);
+      }
       const raChart = window.raliz.raChart;
       // 绘图初始化
       const chart = new raChart(document.getElementById("chart"), {
@@ -176,7 +182,11 @@
         config: config,
       });
       chart.renderData(config.minHeight, config.maxHeight);
-      // 更新绘图
+      window.addEventListener("resize", () => {
+        if (chart) {
+          chart.resize();
+        }
+      });
       // 重置绘图
       // 绘图下载
       // 更新绘图配置项

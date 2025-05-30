@@ -33,6 +33,11 @@ export class WindBar {
   // y1 y2
   private y1: number = 0;
   private y2: number = 0;
+  // dblclick
+  private selectedTime!: number;
+  private timeTriangle!:
+    | d3.Selection<SVGPathElement, unknown, null, undefined>
+    | undefined;
 
   // 定义容器变量
   private container: HTMLElement;
@@ -95,6 +100,8 @@ export class WindBar {
       axisFontSize,
       colorGradient,
       direction,
+      dblClick,
+      dblInit,
     } = this.config;
 
     // TODO: 添加双击廓线标识
@@ -332,7 +339,23 @@ export class WindBar {
             el.style("filter", null);
             this.tooltip?.style("visibility", "hidden");
           });
+        if (dblClick) {
+          el.on("dblclick", (event) => {
+            const d3Node = d3.select(event.target);
+            const value = d3Node.attr("wind-time");
+            let lineData = this.data.filter((d) => {
+              return d[0] === +value;
+            });
+            dblClick(lineData);
+            this.selectedTime = +value;
+            this.renderSelectLine(+value);
+          });
+        }
       });
+
+    if (dblInit) {
+      this.initSelectLine();
+    }
 
     // 创建缩放行为
     this.zoom = d3
@@ -447,6 +470,38 @@ export class WindBar {
           );
         }
       );
+
+      // 时间三角
+      if (this.selectedTime && this.timeTriangle) {
+        let x = this.xScale(this.selectedTime * 1000);
+        let weiyiX = (x - 5) * transform.k + transform.x;
+        const {
+          marginBottom = 20,
+          marginLeft = 40,
+          marginRight = 40,
+        } = this.config;
+        const height = this.container.clientHeight;
+        const width = this.container.clientWidth;
+        if (weiyiX < marginLeft || weiyiX > width - marginRight) {
+          this.timeTriangle
+            .attr(
+              "transform",
+              `translate(${x * transform.k + transform.x - 5},${
+                height - marginBottom + 10
+              } )scale(1)`
+            )
+            .style("display", "none");
+        } else {
+          this.timeTriangle
+            .attr(
+              "transform",
+              `translate(${x * transform.k + transform.x - 5},${
+                height - marginBottom + 10
+              } )scale(1)`
+            )
+            .style("display", "block");
+        }
+      }
     });
   };
 
@@ -531,5 +586,29 @@ export class WindBar {
       .attr("translate-x", x)
       .attr("translate-y", y)
       .attr("translate-rotate", data[3]);
+  }
+
+  // 绘制dbl line
+  private renderSelectLine(time: number) {
+    const x = this.xScale(time * 1000);
+    const y = this.container.clientHeight - (this.config.marginBottom ?? 20);
+    const topTriangleData = "M0,0 L10,0 L5,-10 Z";
+    if (this.timeTriangle) {
+      this.timeTriangle.attr("transform", `translate(${x - 5},${y + 10})`);
+    } else {
+      this.timeTriangle = this.svg
+        ?.append("g")
+        .append("path")
+        .attr("d", topTriangleData)
+        .attr("transform", `translate(${x - 5},${y + 10})`)
+        .attr("class", `select-line-${this.className}`)
+        .attr("fill", this.config.dblColor ?? "steelblue");
+    }
+  }
+
+  // 初始化一个dbl line
+  private initSelectLine() {
+    this.selectedTime = this.data[this.data.length - 1][0];
+    this.renderSelectLine(this.selectedTime);
   }
 }

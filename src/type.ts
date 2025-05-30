@@ -33,6 +33,9 @@ type ChartConfigType = {
   axisFontSize?: string; // 坐标轴字体大小
   colorGradient?: boolean; // 是否渐变
   direction?: "right" | "left"; // 时间轴更新方向
+  dblClick?: (data: BarType | ThiType) => void; // 双击事件
+  dblInit?: boolean; // 是否开启双击事件
+  dblColor?: string; // 时间三角的颜色
 };
 export type ChartConfigTypeBar = ChartConfigType & {
   renderType?: "barb" | "arrow"; // 风羽图两种绘图方式
