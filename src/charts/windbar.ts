@@ -75,11 +75,11 @@ export class WindBar {
     const {
       className,
       title,
-      marginBottom,
-      marginTop,
-      marginLeft,
-      marginRight,
-      yTicks,
+      marginBottom = 20,
+      marginTop = 20,
+      marginLeft = 40,
+      marginRight = 40,
+      yTicks = 5,
       values,
       colors,
       unit,
@@ -96,6 +96,8 @@ export class WindBar {
       colorGradient,
       direction,
     } = this.config;
+
+    // TODO: 添加双击廓线标识
 
     // 创建svg元素
     const width = this.container.clientWidth;

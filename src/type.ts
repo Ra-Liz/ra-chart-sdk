@@ -14,10 +14,10 @@ type ChartConfigType = {
   className: string; // class标识
   title: string; // 标题
   unit: string; // 单位
-  marginBottom: number;
-  marginTop: number;
-  marginLeft: number;
-  marginRight: number;
+  marginBottom?: number;
+  marginTop?: number;
+  marginLeft?: number;
+  marginRight?: number;
   yTicks: number; // Y轴刻度数量
   values: number[]; // colorscale
   colors: string[]; // colorscale
